@@ -1,16 +1,26 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import singleSpaReact from "single-spa-react";
-import Root from "./root.component";
+import { navigateToUrl } from "single-spa";
 
-const lifecycles = singleSpaReact({
-  React,
-  ReactDOM,
-  rootComponent: Root,
-  errorBoundary(err, info, props) {
-    // Customize the root error boundary for your microfrontend here.
-    return null;
-  },
-});
+interface IPropsNavigate {
+  path: string;
+  children?: React.ReactNode;
+}
 
-export const { bootstrap, mount, unmount } = lifecycles;
+export const Navigate: React.FC<IPropsNavigate> = ({
+  path,
+  children,
+}: IPropsNavigate) => {
+  function redirect(e: React.MouseEvent<HTMLButtonElement>) {
+    const originPath = window.location.pathname;
+    navigateToUrl(e.currentTarget.name);
+    // analytics
+    console.log(
+      `Saindo da rota '${originPath}' para a rota '${e.currentTarget.name}'!!!`
+    );
+  }
+  return (
+    <button name={path} onClick={redirect}>
+      {children}
+    </button>
+  );
+};
